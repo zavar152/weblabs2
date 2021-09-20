@@ -10,6 +10,7 @@ import javax.servlet.annotation.*;
 @WebServlet(name = "controller-servlet", value = "/controller-servlet")
 public class ControllerServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        response.setCharacterEncoding("UTF-8");
         String x = request.getParameter("x");
         String y = request.getParameter("y");
         String r = request.getParameter("r");

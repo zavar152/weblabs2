@@ -1,3 +1,4 @@
+<%@ page import="java.util.ArrayList" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -67,15 +68,19 @@
 
     <div id="resFrame">
         <div id="result">
-            <%--            <?php--%>
-            <%--    		$res = "Результаты:<br>";--%>
-            <%--            session_start();--%>
-            <%--            $table = $res."<table border=\"1\"> <tr> <th> X </th> <th> Y </th> <th> R </th> <th> Результат </th> </tr>";--%>
-            <%--            foreach ($_SESSION['table'] as $out) {--%>
-            <%--            $table.="<tr> <th> $out[0] </th> <th> $out[1] </th> <th> $out[2] </th> <th> $out[3] </th> </tr>";--%>
-            <%--            }--%>
-            <%--            $table.="</table>";--%>
-            <%--            echo $table;?>--%>
+            <%
+                out.println("Результаты:");
+                ServletContext servletContext = application;
+                if (servletContext.getAttribute("par") != null) {
+                    ArrayList<String[]> parList = (ArrayList<String[]>) servletContext.getAttribute("par");
+                    for (String[] pars : parList) {
+                        out.println("<br>");
+                        out.println(pars[0]);
+                        out.println(pars[1]);
+                        out.println(pars[2]);
+                    }
+                }
+            %>
         </div>
     </div>
 
