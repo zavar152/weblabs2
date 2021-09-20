@@ -1,0 +1,73 @@
+#blocks {
+    width: 80%;
+    margin: 0 auto;
+}
+
+#blocks>div {
+    font-family: fantasy;
+    border: solid black 2px;
+    background-color: white;
+    border-radius: 15px;
+    margin-top: 1%;
+}
+
+#head {
+    text-align: center;
+    font-size: 25pt;
+    color: orange;
+}
+
+body {
+    background: rgb(213, 213, 217);
+}
+
+#footer {
+    text-align: center;
+    padding: 0.1%;
+    font-size: 11pt;
+    color: gray;
+}
+
+#footer:hover {
+    color: aqua;
+}
+
+#user {
+    font-size: 15pt;
+    padding: 2%;
+}
+
+#result {
+    text-align: center;
+    font-size: 15pt;
+    max-height: 600px;
+    overflow: scroll;
+    padding: 2%;
+}
+
+#resFrame {
+    padding: 10px;
+}
+
+
+table {
+    margin: 0px auto;
+    font-family: serif;
+}
+
+.x {
+    margin-right: 10px;
+}
+
+.r {
+    margin-right: 10px;
+}
+
+.error {
+    color: red;
+}
+
+.info {
+    color: gray;
+    font-size: 12pt;
+}
