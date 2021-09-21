@@ -1,4 +1,4 @@
-package com.zavar.weblab2;
+package com.zavar.weblab2.servlet;
 
 import java.io.*;
 import javax.servlet.RequestDispatcher;
@@ -7,7 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 
-@WebServlet(name = "controller-servlet", value = "/controller-servlet")
+@WebServlet(name = "controller-servlet", value = "/main")
 public class ControllerServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setCharacterEncoding("UTF-8");
@@ -20,8 +20,8 @@ public class ControllerServlet extends HttpServlet {
             RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
             requestDispatcher.forward(request, response);
         } else {
-            ServletContext context= getServletContext();
-            RequestDispatcher rd= context.getRequestDispatcher("/areacheck-servlet");
+            ServletContext context = getServletContext();
+            RequestDispatcher rd = context.getRequestDispatcher("/areacheck-servlet");
             rd.forward(request, response);
         }
     }
