@@ -19,6 +19,9 @@ public class AreaCheckServlet extends HttpServlet {
         float x = Float.parseFloat(req.getParameter("x"));
         float y = Float.parseFloat(req.getParameter("y"));
         float r = Float.parseFloat(req.getParameter("r"));
+        log("x: " + x);
+        log("y: " + y);
+        log("r: " + r);
         ServletContext servletContext = getServletContext();
         if (servletContext.getAttribute("par") == null) {
             servletContext.setAttribute("par", new ArrayList<HitResult>());
@@ -26,7 +29,7 @@ public class AreaCheckServlet extends HttpServlet {
         ArrayList<HitResult> resultsList = (ArrayList<HitResult>) servletContext.getAttribute("par");
 
         String error = "";
-        if (x == -3 || x == -2 || x == -1 || x == 0 || x == 1 || x == 2 || x == 3 || x == 4 || x == 5) {
+        if (x >= -3 && x <= 5) {
             if (y >= -3 && y <= 5) {
                 if (r == 1 || r == 1.5 || r == 2 || r == 2.5 || r == 3) {
                     resultsList.add(new HitResult(new Point(x, y), r));
@@ -37,7 +40,7 @@ public class AreaCheckServlet extends HttpServlet {
                 error = "Введите корректное значение Y (-3..5)";
             }
         } else {
-            error = "Выберите корректное значение X";
+            error = "Выберите корректное значение X (-3..5)";
         }
 
         resp.getWriter().println("Результаты:");
@@ -52,6 +55,7 @@ public class AreaCheckServlet extends HttpServlet {
             }
         }
         table.append("</table>");
+        resp.setStatus(200);
         resp.getWriter().println(table);
     }
 }

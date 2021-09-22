@@ -17,7 +17,7 @@ public class HitResult {
             result = true;
         } else if (x <= 0 && y >= 0 && y <= x+r/2) {
             result = true;
-        } else if (x <= 0 && y <= 0 && y <= Math.sqrt(r*r/4 - x*x)) {
+        } else if (x >= 0 && y <= 0 && y <= Math.sqrt(r*r/4 - x*x)) {
             result = true;
         }
     }

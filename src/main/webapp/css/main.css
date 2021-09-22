@@ -41,7 +41,7 @@ body {
     text-align: center;
     font-size: 15pt;
     max-height: 600px;
-    overflow: scroll;
+    overflow: auto;
     padding: 2%;
 }
 
@@ -53,8 +53,35 @@ body {
     padding: 10px;
 }
 
+#graphFrameInner {
+    overflow: auto;
+    height: 340px;
+    padding: 10px;
+}
+
+#graphScroll {
+    position: relative;
+    height: auto;
+}
+
+#graphHeight {
+    height: 100%;
+}
+
 #graph {
-    width: 100%;
+    left: 50%;
+    margin-left: -150px;
+    padding-right: 10px;
+    position: absolute;
+    z-index: 1;
+}
+
+#area {
+    left: 50%;
+    margin-left: -150px;
+    padding-right: 10px;
+    position: absolute;
+    z-index: 0;
 }
 
 table {

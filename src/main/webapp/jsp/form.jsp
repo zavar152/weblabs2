@@ -65,12 +65,20 @@
             <label class="r"><input type="checkbox" name="r" value="3" onclick="resetCheckBox(this)">3</label>
             <br><br>
             <button class="glow-on-hover" type="submit" id="submit" onclick="return check()">Отправить</button>
-            <button class="glow-on-hover" type="reset">Сброс</button>
+            <button class="glow-on-hover" type="reset" onclick="resetArea()">Сброс формы</button>
+            <button class="glow-on-hover" type="button" onclick="resetAll()">Сброс графика</button>
         </form>
     </div>
 
     <div id="graphFrame">
-        <canvas id="graph"> </canvas>
+        <div id="graphFrameInner">
+            <div id="graphScroll">
+                <div id="graphHeight">
+                    <canvas id="graph" height="320" width="320"></canvas>
+                    <canvas id="area" height="320" width="320"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="resFrame">
@@ -79,7 +87,28 @@
                 out.println("Результаты:");
                 if (application.getAttribute("par") != null) {
                     ArrayList<HitResult> resultsList = (ArrayList<HitResult>) application.getAttribute("par");
-                    StringBuilder table = new StringBuilder("<table border=\"1\"> <tr> <th> X </th> <th> Y </th> <th> R </th> <th> Результат </th> </tr>");
+                    StringBuilder table = new StringBuilder();
+                    table.append("<script type=\"text/javascript\">\n" +
+                            "\n" +
+                            "    let canvas = document.getElementById('graph');\n" +
+                            "    let ctx = canvas.getContext('2d');\n" +
+                            "    let div = 12;\n" +
+                            "    let kf = canvas.height/div;\n" +
+                            "    let offset = canvas.height/2;" +
+                            "    function drawDot(x, y, color, size){\n" +
+                            "        ctx.fillStyle = color;\n" +
+                            "        console.log('x: ' + x);\n" +
+                            "        console.log('y: ' + y);\n" +
+                            "\n" +
+                            "        console.log('true x: ' + (x/kf-(div/2)));\n" +
+                            "        console.log('true y: ' + -(y/kf-(div/2)));\n" +
+                            "\n" +
+                            "        ctx.beginPath();\n" +
+                            "        ctx.arc(x, y, size, 0, Math.PI * 2, true);\n" +
+                            "        ctx.fill();\n" +
+                            "    }" +
+                            "</script>");
+                    table.append("<table border=\"1\"> <tr> <th> X </th> <th> Y </th> <th> R </th> <th> Результат </th> </tr>");
                     for (HitResult hitResult : resultsList) {
                         if(hitResult.getResult()) {
                             table.append("<tr> <th>").append(hitResult.getX()).append("</th> <th>").append(hitResult.getY()).append("</th> <th>").append(hitResult.getR()).append("</th> <th>").append("<font color=\"chartreuse\">Да</font>").append("</th> </tr>");
@@ -88,6 +117,9 @@
                         }
                     }
                     table.append("</table>");
+                    for (HitResult hitResult : resultsList) {
+                        table.append("<script type=\"text/javascript\"> drawDot(" + hitResult.getX() + "* kf + offset, " + -hitResult.getY() + "* kf + offset, \"#ce49f3\", 3); </script>");
+                    }
                     out.println(table.toString());
                 }
             %>
@@ -102,10 +134,59 @@
 
 <script type="text/javascript">
 
+    canvas = document.getElementById('graph');
+    ctx = canvas.getContext('2d');
+    div = 12;
+    kf = canvas.height/div;
+    offset = canvas.height/2;
+    const areaCanvas = document.getElementById('area');
+    const areaCtx = areaCanvas.getContext('2d');
+
+    function resetAll() {
+        resetArea();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        draw();
+    }
+
+    function resetArea() {
+        radiusGlobal = undefined;
+        areaCtx.clearRect(0, 0, areaCanvas.width, areaCanvas.height);
+    }
+
+    function drawArea(r) {
+        console.log('Area r: ' + r);
+        areaCtx.clearRect(0, 0, areaCanvas.width, areaCanvas.height);
+        areaCtx.beginPath();
+        areaCtx.moveTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2 - (r*kf));
+        areaCtx.lineTo(areaCanvas.width/2 + (r*kf/2), areaCanvas.height/2 - (r*kf));
+        areaCtx.lineTo(areaCanvas.width/2 + (r*kf/2), areaCanvas.height/2);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.closePath();
+        areaCtx.fillStyle = "#55c3e5";
+        areaCtx.fill();
+
+        areaCtx.beginPath();
+        areaCtx.moveTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2 - (r*kf/2));
+        areaCtx.lineTo(areaCanvas.width/2 - (r*kf/2), areaCanvas.height/2);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.closePath();
+        areaCtx.fillStyle = "#55c3e5";
+        areaCtx.fill();
+
+        let radians = (Math.PI/180)*90;
+        areaCtx.beginPath();
+        areaCtx.moveTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.arc(areaCanvas.width/2, areaCanvas.height/2, (r*kf/2), 0, radians, false);
+        areaCtx.lineTo(areaCanvas.width/2, areaCanvas.height/2);
+        areaCtx.closePath();
+        areaCtx.fillStyle = "#55c3e5";
+        areaCtx.fill();
+    }
+
     function draw() {
-        const canvas = document.getElementById('graph');
-        canvas.height = canvas.width;
-        const ctx = canvas.getContext('2d');
         ctx.strokeRect(0, 0, canvas.height, canvas.width);
         ctx.beginPath();
         ctx.moveTo(canvas.width/2, 0);
@@ -119,67 +200,147 @@
         ctx.closePath();
         ctx.stroke();
 
+        ctx.beginPath();
+        ctx.moveTo(canvas.width/2 + kf*5, canvas.height/2 - kf*5);
+        ctx.lineTo(canvas.width/2 - kf*3, canvas.height/2 - kf*5);
+        ctx.lineTo(canvas.width/2 - kf*3, canvas.height/2 + kf*3);
+        ctx.lineTo(canvas.width/2 + kf*5, canvas.height/2 + kf*3);
+        ctx.closePath();
+        ctx.strokeStyle="#d02020";
+        ctx.stroke();
+        ctx.strokeStyle="#000000";
+
+        drawDot(canvas.width/2, canvas.height/2, "#000000", 5);
+        drawSegmentX(0, div);
+        drawSegmentY(0, div);
+
         $("#graph").click(function(e){
-            getPosition(e);
+            if (radiusGlobal === undefined) {
+                alert("Выберите значение R");
+            } else {
+                drawDotAtClick(e);
+            }
         });
+    }
 
-        var pointSize = 3;
-
-        function getPosition(event){
-            var rect = canvas.getBoundingClientRect();
-            var x = event.clientX - rect.left;
-            var y = event.clientY - rect.top;
-
-            drawCoordinates(x*1.6,y*1.6);
-        }
-
-        function drawCoordinates(x,y){
-            ctx.fillStyle = "#ff2626"; // Red color
-
+    function drawSegmentX(beginFromX, n) {
+        ctx.font = "14px serif";
+        for (let i = 0; i <= n; i++) {
             ctx.beginPath();
-            ctx.arc(x, y, pointSize, 0, Math.PI * 2, true);
-            ctx.fill();
+            ctx.moveTo(beginFromX + kf*i, (canvas.height/2) + 5);
+            ctx.lineTo(beginFromX + kf*i, (canvas.height/2) - 5);
+            ctx.closePath();
+            ctx.stroke();
+            if(Math.abs(i-div/2) !== div/2) {
+                if (i - div / 2 == 0)
+                    ctx.fillText(i - div / 2, beginFromX + kf * i + 5, (canvas.height / 2) + 15);
+                else if (i - div / 2 < 0)
+                    ctx.fillText(i - div / 2, beginFromX + kf * i + 3, (canvas.height / 2) + 15);
+                else if (i - div / 2 > 0)
+                    ctx.fillText(i - div / 2, beginFromX + kf * i + 1, (canvas.height / 2) + 15);
+            }
         }
     }
 
-    let k;
+    function drawSegmentY(beginFromY, n) {
+        ctx.font = "14px serif";
+        for (let i = 0; i <= n; i++) {
+            ctx.beginPath();
+            ctx.moveTo((canvas.height/2) - 5, kf*i);
+            ctx.lineTo((canvas.height/2) + 5, kf*i);
+            ctx.closePath();
+            ctx.stroke();
+            if(Math.abs(i-div/2) !== div/2)
+            {
+                if(i-div/2 < 0)
+                    ctx.fillText(-(i-div/2), (canvas.height/2) + 10, beginFromY + kf*i + 3);
+                else if(i-div/2 > 0)
+                    ctx.fillText(-(i-div/2), (canvas.height/2) - 20, beginFromY + kf*i + 3);
+            }
+        }
+    }
+
+    var request = new XMLHttpRequest();
+
+    function drawDotAtClick(event){
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+
+        drawDot(x, y, "#ce49f3", 3);
+        let body = "x=" + (x/kf-(div/2)) + "&y=" + -(y/kf-(div/2)) + "&r=" + radiusGlobal;
+
+            var m_method = "GET";
+            var m_action = "${pageContext.request.contextPath}/main";
+            var m_data = body;
+            $.ajax({
+                type: m_method,
+                url: m_action,
+                data: m_data,
+                success: function (result) {
+                    $('#result').html(result);
+                }
+            });
+    }
+
+    function drawDot(x, y, color, size){
+        ctx.fillStyle = color;
+        console.log('x: ' + x);
+        console.log('y: ' + y);
+
+        console.log('true x: ' + (x/kf-(div/2)));
+        console.log('true y: ' + -(y/kf-(div/2)));
+
+        ctx.beginPath();
+        ctx.arc(x, y, size, 0, Math.PI * 2, true);
+        ctx.fill();
+    }
+
+    var radiusGlobal;
 
     function resetCheckBox(element) {
+        let reset = true;
         document.getElementsByName('r').forEach((value) => {
-            k = value.value;
             if (!value.isEqualNode(element) && value.checked) {
                 value.checked = !value.checked;
+            }
+            if(value.isEqualNode(element)) {
+                radiusGlobal = value.value;
+                drawArea(value.value);
+                if(!value.checked) {
+                    radiusGlobal = undefined;
+                    resetArea();
+                }
             }
         });
     }
 
     function check() {
-        const r = k;//document.forms["inForm"]["r"].value;
+        const r = radiusGlobal;//document.forms["inForm"]["r"].value;
         const x = document.forms["inForm"]["x"].value;
         const y = document.forms["inForm"]["y"].value;
 
-        if (!isNaN(x) && (x == -3 || x == -2 || x == -1 || x == 0 || x == 1 || x == 2 || x == 3 || x == 4 || x == 5)) {
+        console.log('Got x: ' + x);
+        console.log('Got y: ' + y);
+        console.log('Got r: ' + r);
 
+        if (x !== '' && !isNaN(x) && (x >= -3 && x <= 5)) {
+            if (y !== '' && !isNaN(y) && (y >= -3 && y <= 5)) {
+                if (!isNaN(r) && (r == 1 || r == 1.5 || r == 2 || r == 2.5 || r == 3)) {
+                    drawDot(x * kf + offset, -y * kf + offset, "#ce49f3", 3);
+                    return true;
+                } else {
+                    alert("Выберите корректное значение R");
+                    return false;
+                }
+            } else {
+                alert("Введите корректное значение Y (-3..5)");
+                return false;
+            }
         } else {
             alert("Выберите корректное значение X");
             return false;
         }
-
-        if (!isNaN(y) && (y >= -3 && y <= 5)) {
-
-        } else {
-            alert("Введите корректное значение Y (-3..5)");
-            return false;
-        }
-
-        if (!isNaN(r) && (r == 1 || r == 1.5 || r == 2 || r == 2.5 || r == 3)) {
-
-        } else {
-            alert("Выберите корректное значение R");
-            return false;
-        }
-
-        return true;
     }
 </script>
 
