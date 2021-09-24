@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.zavar.weblab2.hit.HitResult" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
@@ -6,10 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Web Lab 2</title>
-
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/main.css"/>
-
-
 </head>
 <body>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -84,7 +82,7 @@
     <script src="${pageContext.request.contextPath}/js/graph.js"></script>
     <div id="resFrame">
         <div id="result">
-            <script>draw();clickSetup();</script>
+            <script>draw();clickSetup("${pageContext.request.contextPath}");</script>
             <%
                 out.println("Результаты:");
                 if (application.getAttribute("par") != null) {
@@ -99,12 +97,19 @@
                         }
                     }
                     table.append("</table>");
-                    for (HitResult hitResult : resultsList) {
-                        table.append("<script type=\"text/javascript\"> drawDot(").append(hitResult.getX()).append("* kf + offset, ").append(-hitResult.getY()).append("* kf + offset, \"#ce49f3\", 3); </script>");
-                    }
                     out.println(table.toString());
                 }
             %>
+            <script>
+                <c:forEach items="${pageContext.servletContext.getAttribute(\"par\")}" var="results">
+                    drawFromContext(${results.getX()}, ${results.getY()})
+                </c:forEach>
+
+                function drawFromContext(x, y) {
+                    drawDot(x * kf + offset, -y * kf + offset, "#ce49f3", 3);
+                }
+
+            </script>
         </div>
     </div>
 
@@ -113,32 +118,6 @@
 				ИТМО, 2021г</span>
     </div>
 </div>
-
-<script>
-
-    var request = new XMLHttpRequest();
-
-    function drawDotAtClick(event) {
-        var rect = canvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-
-        drawDot(x, y, "#ce49f3", 3);
-        let body = "x=" + (x / kf - (div / 2)) + "&y=" + -(y / kf - (div / 2)) + "&r=" + radiusGlobal;
-
-        var m_method = "GET";
-        var m_action = "${pageContext.request.contextPath}/main";
-        $.ajax({
-            type: m_method,
-            url: m_action,
-            data: body,
-            success: function (result) {
-                $('#result').html(result);
-            }
-        });
-    }
-
-</script>
 
 </body>
 </html>

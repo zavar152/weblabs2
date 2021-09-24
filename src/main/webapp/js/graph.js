@@ -79,12 +79,34 @@ function draw() {
     drawSegmentY(0, div);
 }
 
-function clickSetup() {
+function clickSetup(path) {
     $("#graph").click(function (e) {
         if (radiusGlobal === undefined) {
             alert("Выберите значение R");
         } else {
-            drawDotAtClick(e);
+            drawDotAtClick(e, path);
+        }
+    });
+}
+
+var request = new XMLHttpRequest();
+
+function drawDotAtClick(event, path) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
+    drawDot(x, y, "#ce49f3", 3);
+    let body = "x=" + (x / kf - (div / 2)) + "&y=" + -(y / kf - (div / 2)) + "&r=" + radiusGlobal;
+
+    var m_method = "GET";
+    var m_action = path + "/main";
+    $.ajax({
+        type: m_method,
+        url: m_action,
+        data: body,
+        success: function (result) {
+            $('#result').html(result);
         }
     });
 }
