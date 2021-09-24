@@ -16,12 +16,10 @@ public class ControllerServlet extends HttpServlet {
         String r = request.getParameter("r");
         if (x == null || y == null || r == null) {
             String path = "/jsp/form.jsp";
-            ServletContext servletContext = getServletContext();
-            RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(path);
+            RequestDispatcher requestDispatcher = getServletContext().getRequestDispatcher(path);
             requestDispatcher.forward(request, response);
         } else {
-            ServletContext context = getServletContext();
-            RequestDispatcher rd = context.getRequestDispatcher("/areacheck-servlet");
+            RequestDispatcher rd = getServletContext().getRequestDispatcher("/areacheck-servlet");
             rd.forward(request, response);
         }
     }

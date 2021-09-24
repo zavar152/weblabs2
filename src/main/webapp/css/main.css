@@ -45,6 +45,12 @@ body {
     padding: 2%;
 }
 
+#res {
+    text-align: center;
+    font-size: 15pt;
+    padding: 2%;
+}
+
 #resFrame {
     padding: 10px;
 }

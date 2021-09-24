@@ -89,8 +89,6 @@ function clickSetup(path) {
     });
 }
 
-var request = new XMLHttpRequest();
-
 function drawDotAtClick(event, path) {
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;

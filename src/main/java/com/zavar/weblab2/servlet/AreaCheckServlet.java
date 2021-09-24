@@ -3,6 +3,7 @@ package com.zavar.weblab2.servlet;
 import com.zavar.weblab2.hit.HitResult;
 import com.zavar.weblab2.hit.Point;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -15,7 +16,7 @@ import java.util.ArrayList;
 @WebServlet(name = "areacheck-servlet", value = "/areacheck-servlet")
 public class AreaCheckServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         float x = Float.parseFloat(req.getParameter("x"));
         float y = Float.parseFloat(req.getParameter("y"));
         float r = Float.parseFloat(req.getParameter("r"));
@@ -43,19 +44,31 @@ public class AreaCheckServlet extends HttpServlet {
             error = "Выберите корректное значение X (-3..5)";
         }
 
-        resp.getWriter().println("Результаты:");
-        if(!error.isEmpty())
-            resp.getWriter().println("<br><label class=\"error\">" + error + "</label>");
-        StringBuilder table = new StringBuilder("<table border=\"1\"> <tr> <th> X </th> <th> Y </th> <th> R </th> <th> Результат </th> </tr>");
-        for (HitResult hitResult : resultsList) {
-            if(hitResult.getResult()) {
-                table.append("<tr> <th>").append(hitResult.getX()).append("</th> <th>").append(hitResult.getY()).append("</th> <th>").append(hitResult.getR()).append("</th> <th>").append("<font color=\"chartreuse\">Да</font>").append("</th> </tr>");
-            } else {
-                table.append("<tr> <th>").append(hitResult.getX()).append("</th> <th>").append(hitResult.getY()).append("</th> <th>").append(hitResult.getR()).append("</th> <th>").append("<font color=\"crimson\">Нет</font>").append("</th> </tr>");
+        String tz = req.getParameter("tz");
+        log("tz: " + tz);
+        if(tz != null) {
+            /*resp.setContentType("text/html");
+            String path = req.getContextPath() + "/jsp/result.jsp";
+            resp.sendRedirect(path);
+            resp.setStatus(300);*/
+            resp.setStatus(HttpServletResponse.SC_FOUND);//302
+            resp.setHeader("Location", req.getContextPath() + "/jsp/result.jsp");
+            resp.sendRedirect(req.getContextPath() + "/jsp/result.jsp");
+        } else {
+            resp.getWriter().println("Результаты:");
+            if (!error.isEmpty())
+                resp.getWriter().println("<br><label class=\"error\">" + error + "</label>");
+            StringBuilder table = new StringBuilder("<table border=\"1\"> <tr> <th> X </th> <th> Y </th> <th> R </th> <th> Результат </th> </tr>");
+            for (HitResult hitResult : resultsList) {
+                if (hitResult.getResult()) {
+                    table.append("<tr> <th>").append(hitResult.getX()).append("</th> <th>").append(hitResult.getY()).append("</th> <th>").append(hitResult.getR()).append("</th> <th>").append("<font color=\"chartreuse\">Да</font>").append("</th> </tr>");
+                } else {
+                    table.append("<tr> <th>").append(hitResult.getX()).append("</th> <th>").append(hitResult.getY()).append("</th> <th>").append(hitResult.getR()).append("</th> <th>").append("<font color=\"crimson\">Нет</font>").append("</th> </tr>");
+                }
             }
+            table.append("</table>");
+            resp.setStatus(200);
+            resp.getWriter().println(table);
         }
-        table.append("</table>");
-        resp.setStatus(200);
-        resp.getWriter().println(table);
     }
 }

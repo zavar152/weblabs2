@@ -23,7 +23,13 @@
                 url: m_action,
                 data: m_data,
                 success: function (result) {
-                    $('#result').html(result);
+                    if (result.includes('html')) {
+                        document.open();
+                        document.write(result);
+                        document.close();
+                    } else {
+                        $('#result').html(result);
+                    }
                 }
             });
         });
@@ -66,6 +72,8 @@
             <button class="glow-on-hover" type="submit" id="submit" onclick="return check()">Отправить</button>
             <button class="glow-on-hover" type="reset" onclick="resetArea()">Сброс формы</button>
             <button class="glow-on-hover" type="reset" onclick="resetAll()">Сброс графика</button>
+            <br><br>
+            <label><input type="checkbox" name="tz" checked="checked">Выполнять ТЗ</label>
         </form>
     </div>
 
