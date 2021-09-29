@@ -14,10 +14,10 @@
 <script type="text/javascript">
     $(function () {
         $('#calcForm').submit(function (e) {
-            e.preventDefault(); //отменяем стандартное действие при отправке формы
-            var m_method = $(this).attr('method'); //берем из формы метод передачи данных
-            var m_action = $(this).attr('action'); //получаем адрес скрипта на сервере, куда нужно отправить форму
-            var m_data = $(this).serialize(); //получаем данные, введенные пользователем в формате input1=value1&input2=value2...,то есть в стандартном формате передачи данных формы
+            e.preventDefault();
+            var m_method = $(this).attr('method');
+            var m_action = $(this).attr('action');
+            var m_data = $(this).serialize();
             $.ajax({
                 type: m_method,
                 url: m_action,
@@ -59,7 +59,7 @@
             <br>
             Введите Y:
             <label>
-                <input type="text" class="y" placeholder="-3..5" size="2" name="y" pattern="-[1-3]|0|[1-5]" required>
+                <input type="text" class="y" placeholder="-3..5" size="2" name="y" pattern="(?=.)([+-]?(?=[\d\.])(\d*)(\.(\d+))?)" required>
             </label>
             <br>
             Выберите R:

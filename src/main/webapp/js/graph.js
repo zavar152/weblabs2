@@ -118,7 +118,7 @@ function drawSegmentX(beginFromX, n) {
         ctx.closePath();
         ctx.stroke();
         if (Math.abs(i - div / 2) !== div / 2) {
-            if (i - div / 2 == 0)
+            if (i - div / 2 === 0)
                 ctx.fillText(i - div / 2, beginFromX + kf * i + 5, (canvas.height / 2) + 15);
             else if (i - div / 2 < 0)
                 ctx.fillText(i - div / 2, beginFromX + kf * i + 3, (canvas.height / 2) + 15);
@@ -178,7 +178,7 @@ function resetCheckBox(element) {
 }
 
 function check() {
-    const r = radiusGlobal;//document.forms["inForm"]["r"].value;
+    const r = radiusGlobal;
     const x = document.forms["inForm"]["x"].value;
     const y = document.forms["inForm"]["y"].value;
 
@@ -187,7 +187,7 @@ function check() {
     console.log('Got r: ' + r);
 
     if (x !== '' && !isNaN(x) && (x >= -3 && x <= 5)) {
-        if (y !== '' && !isNaN(y) && (y >= -3 && y <= 5)) {
+        if (y !== '' && !isNaN(y) && !isNegativeZero(Number(y)) && (y >= -3 && y <= 5)) {
             if (!isNaN(r) && (r == 1 || r == 1.5 || r == 2 || r == 2.5 || r == 3)) {
                 drawDot(x * kf + offset, -y * kf + offset, "#ce49f3", 3);
                 return true;
@@ -203,4 +203,8 @@ function check() {
         alert("Выберите корректное значение X");
         return false;
     }
+}
+
+function isNegativeZero(p) {
+    return p === 0 && (1 / p) === -Infinity
 }

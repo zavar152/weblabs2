@@ -1,10 +1,8 @@
 package com.zavar.weblab2.hit;
 
-import java.util.function.Predicate;
-
 public class HitResult {
-    private float r;
-    private Point point;
+    private final float r;
+    private final Point point;
     private boolean result = false;
 
     public HitResult(Point point, float r) {
